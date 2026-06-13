@@ -1,0 +1,14 @@
+{
+    "__version__": "1.0b3",
+    "__numeric_version__": 1,
+    "files": {
+        "/snake/config.json": {
+            "type": "text",
+            "data": "{\n    \"name\": \"Snake\",\n    \"path\": \"/flash/apps/snake/snake.py\"\n    }\n"
+        },
+        "/snake/snake.py": {
+            "type": "text",
+            "data": "import time, random, system, graphics as g\n\ng.init()\nc = g.canvas\nTOP = 12\nW, H = 240, 135\nCELL = 6\n\ncols = W // CELL\nrows = H // CELL\nscore = 0\nsnake = [(10, 10)]\ndir = (1, 0)\nfood = (20, 10)\n\ndef spawn():\n\n    while True:\n\n        pos = (\n            random.randint(0, cols - 1),\n            random.randint(0, rows - 1)\n        )\n\n        if pos not in snake:\n            return pos\nexit_hold_start = None\n\ndef check_exit():\n    global exit_hold_start\n\n    if system.key1_pressed() and system.key2_pressed():\n\n        if exit_hold_start is None:\n            exit_hold_start = time.ticks_ms()\n\n        elif time.ticks_diff(time.ticks_ms(), exit_hold_start) > 2000:\n            return True\n\n    else:\n        exit_hold_start = None\n\n    return False\n\nwhile True:\n\n    if check_exit():\n        break\n\n    if system.key1_just_pressed():\n        dir = (-dir[1], dir[0])\n\n    if system.key2_just_pressed():\n        dir = (dir[1], -dir[0])\n\n    head = snake[0]\n\n    new_head = (\n        (head[0] + dir[0]) % cols,\n        (head[1] + dir[1]) % rows\n    )\n    \n    if new_head == food:\n\n        score += 1\n        food = spawn()\n\n    else:\n\n        snake.pop()\n\n    snake.insert(0, new_head)\n\n    c.fillScreen(0x000000)\n\n    # food\n    c.fillRect(\n    food[0] * CELL,\n    TOP + food[1] * CELL,\n    CELL,\n    CELL,\n    0x00FF00\n    )\n\n    # snake\n    for s in snake:\n\n        c.fillRect(\n            s[0] * CELL,\n            TOP + s[1] * CELL,\n            CELL,\n            CELL,\n            0xFFFFFF\n        )\n    c.setTextColor(0xFFFFFF)\n    c.setCursor(2, 2)\n    c.print(\"Score: \" + str(score))\n    c.push(0, 0)\n    time.sleep_ms(120)"
+        }
+    }
+}
